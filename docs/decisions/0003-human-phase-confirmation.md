@@ -11,6 +11,8 @@ plan, validation, and next-phase brief revisions.
 ## Consequences
 
 - No agent can silently change strategy or provision the next project.
+- The host enforces the principal with `resolverPolicy: "human_only"`; the plugin
+  never resolves its own confirmation.
 - Revised evidence invalidates earlier confirmation.
 - Agent-addressed interaction wake behavior is not a correctness dependency.
 - Policy-driven automatic transitions are deferred.
