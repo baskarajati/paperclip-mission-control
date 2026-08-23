@@ -1,7 +1,7 @@
 # M1B: Idempotent Plugin Project Creation
 
-Status: revised candidate awaiting final reviewer confirmation and upstream
-design discussion
+Status: independently reviewed; upstream design discussion open in
+[paperclipai/paperclip#12040](https://github.com/paperclipai/paperclip/issues/12040)
 
 ## Objective
 
