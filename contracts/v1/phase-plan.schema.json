@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/baskarajati/paperclip-mission-control/contracts/v1/phase-plan.schema.json",
   "title": "Phase plan",
+  "description": "Mission phase intent. A human confirmation and a transition key both bind this document's revision, so it must never carry derived state. Derived phase state lives in the plugin database. See issue #8.",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "missionId", "planRevisionId", "phases"],
@@ -15,11 +16,10 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["phaseId", "objective", "state"],
+        "required": ["phaseId", "objective"],
         "properties": {
           "phaseId": { "$ref": "common.schema.json#/$defs/stableId" },
           "objective": { "$ref": "common.schema.json#/$defs/humanSummary" },
-          "state": { "$ref": "common.schema.json#/$defs/phaseState" },
           "validationContractRef": { "$ref": "common.schema.json#/$defs/stableId" }
         }
       }

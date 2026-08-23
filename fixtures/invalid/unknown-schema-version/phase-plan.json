@@ -5,8 +5,7 @@
   "phases": [
     {
       "phaseId": "intake",
-      "objective": "Capture every invoice into a normalized queue.",
-      "state": "planned"
+      "objective": "Capture every invoice into a normalized queue."
     }
   ]
 }

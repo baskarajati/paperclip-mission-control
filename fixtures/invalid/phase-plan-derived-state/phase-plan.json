@@ -6,16 +6,13 @@
     {
       "phaseId": "intake",
       "objective": "Capture every invoice into a normalized queue.",
-      "validationContractRef": "intake-contract"
+      "state": "completed"
     },
     {
       "phaseId": "validation",
       "objective": "Validate queued invoices against the ledger.",
+      "state": "validating",
       "validationContractRef": "validation-phase-contract"
-    },
-    {
-      "phaseId": "payment",
-      "objective": "Prepare and execute approved payments."
     }
   ]
 }

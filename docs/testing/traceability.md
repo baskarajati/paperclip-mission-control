@@ -19,6 +19,14 @@ passing test), `planned` (assigned to a named milestone), and
 | INV-M0-008 | Every assertion result maps to an assertion the contract declares (`MC_UNKNOWN_ASSERTION_RESULT`) | 0 | Fixture subtest `unknown-assertion-result` plus unit test "pair validation rejects assertion results not declared by the contract" (pair validation) | covered |
 | INV-M0-009 | Paperclip entity, revision, evidence, user, goal, agent, and interaction IDs are lowercase RFC 4122 UUIDs; other shapes fail closed (`MC_SCHEMA_INVALID`) | 0 | `paperclipId` schema grammar plus fixture subtest `paperclip-id-not-uuid` plus unit test "paperclip IDs must be lowercase RFC 4122 UUIDs" | covered |
 | INV-M0-010 | The canonical project-create request carries exactly the proposed Paperclip project fields (`companyId`, `name`, `description`, `status`, `goalIds`, `leadAgentId`, `idempotencyKey`) with deterministic `backlog` status, the mission goal as sole linked goal, and the next-phase lead agent (`MC_NON_CANONICAL_REQUEST`) | 0 | Schema field set plus unit test "canonical project-create request uses real proposed Paperclip project fields" plus fixture subtests `non-canonical-request`, `request-drift`, and `paperclip-id-not-uuid` | covered |
+| INV-M0-011 | The phase plan carries mission intent only; derived phase state fails closed (`MC_SCHEMA_INVALID`) so a state write can neither expire a bound confirmation nor change the transition key | 0 | Unit tests "the phase plan declares only intent fields" and "a phase plan that carries derived state fails closed" plus fixture subtest `phase-plan-derived-state` | covered |
+
+`INV-M0-011` is the contract-level guard for `INV-RUN-003`. A confirmation binds
+the exact phase plan revision, and the host expires a pending confirmation when
+its target document gains a revision. The transition key binds the same
+revision, and that key is the host idempotency key. Derived state inside the
+phase plan would therefore expire live confirmations and produce a second
+project for one phase. Issue #8 records the defect and this repair.
 
 ## Runtime invariants assigned to later milestones
 

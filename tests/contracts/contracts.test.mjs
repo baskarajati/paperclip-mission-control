@@ -100,6 +100,44 @@ test("transition keys stay within 255 characters", () => {
     "nextPhaseLeadAgentId must contribute to the transition key",
   );
 });
+/**
+ * The phase plan is intent only. It must never carry derived phase state.
+ *
+ * A confirmation binds to the exact phase plan revision, and the host expires a
+ * pending confirmation when its target document gains a revision. The
+ * transition key also binds that revision, and the key is the host idempotency
+ * key. A derived-state write would therefore expire a live human confirmation
+ * and change the idempotency key, which yields a second project for one phase.
+ *
+ * See issue #8 and docs/reviews/2026-08-23-canonical-request-divergence.md.
+ */
+test("the phase plan declares only intent fields", () => {
+  const schema = loadJson(
+    join(ROOT, "contracts", "v1", "phase-plan.schema.json"),
+  );
+  const phase = schema.properties.phases.items;
+  assert.equal(phase.additionalProperties, false);
+  assert.deepEqual(Object.keys(phase.properties).sort(), [
+    "objective",
+    "phaseId",
+    "validationContractRef",
+  ]);
+  assert.deepEqual([...phase.required].sort(), ["objective", "phaseId"]);
+});
+
+test("a phase plan that carries derived state fails closed", () => {
+  const plan = loadJson(join(VALID_DIR, "phase-plan.json"));
+  for (const field of ["state", "completedAt", "reconciledRevisionId"]) {
+    const drifted = JSON.parse(JSON.stringify(plan));
+    drifted.phases[0][field] = "completed";
+    assert.throws(
+      () => validateDocument("phase-plan", drifted),
+      (err) => err.code === "MC_SCHEMA_INVALID",
+      `phase plan must reject the derived field ${field}`,
+    );
+  }
+});
+
 test("invalid fixtures fail with their declared stable code", async (t) => {
   const entries = readdirSync(INVALID_DIR).sort();
   assert.ok(entries.length >= 7, `expected >=7 invalid fixtures, got ${entries.length}`);
