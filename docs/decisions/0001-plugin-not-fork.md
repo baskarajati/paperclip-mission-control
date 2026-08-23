@@ -1,6 +1,6 @@
 # ADR 0001: Distribute Mission Control as a Plugin
 
-Status: proposed
+Status: accepted on 2026-08-23
 
 ## Decision
 

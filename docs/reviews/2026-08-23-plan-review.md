@@ -2,7 +2,7 @@
 
 Date: 2026-08-23
 
-Status: reconciled; awaiting owner approval
+Status: reconciled and accepted by owner
 
 ## Reviewers
 
@@ -68,6 +68,6 @@ have been incorporated into the architecture and milestone plan.
 
 ## Implementation gate
 
-No implementation begins until the owner approves the reconciled architecture
-and milestone plan. Upstream contributions, package scaffolding, live installs,
-and releases remain unstarted.
+The owner approved the reconciled architecture and milestone plan on 2026-08-23.
+Implementation may proceed under `docs/supervision-protocol.md`. Live installs,
+publication, and releases retain their separate owner gates.

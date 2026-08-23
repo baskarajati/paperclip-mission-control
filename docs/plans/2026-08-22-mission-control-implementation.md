@@ -1,6 +1,6 @@
 # Mission Control v1 Implementation Plan
 
-Status: independently reviewed; awaiting owner approval
+Status: accepted by owner on 2026-08-23
 
 This plan is subordinate to
 `docs/plans/2026-08-22-mission-control-architecture.md`. Each milestone requires

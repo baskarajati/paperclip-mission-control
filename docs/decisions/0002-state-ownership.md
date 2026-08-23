@@ -1,6 +1,6 @@
 # ADR 0002: Split Business Truth from Operational State
 
-Status: proposed
+Status: accepted on 2026-08-23
 
 ## Decision
 

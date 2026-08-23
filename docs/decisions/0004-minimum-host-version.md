@@ -1,6 +1,6 @@
 # ADR 0004: Fail Closed Below the Minimum Host Version
 
-Status: proposed
+Status: accepted on 2026-08-23
 
 ## Decision
 

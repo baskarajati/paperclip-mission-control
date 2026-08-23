@@ -1,6 +1,6 @@
 # ADR 0003: Require Human Confirmation for Every v1 Phase
 
-Status: proposed
+Status: accepted on 2026-08-23
 
 ## Decision
 

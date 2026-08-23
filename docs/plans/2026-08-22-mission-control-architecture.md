@@ -1,6 +1,6 @@
 # Mission Control v1 Architecture
 
-Status: independently reviewed; awaiting owner approval
+Status: accepted by owner on 2026-08-23
 
 ## Outcome
 
