@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "missionId": "invoice-automation",
+  "phaseId": "validation",
+  "reportRevisionId": "509a5bf9-2ac6-5bee-8335-1cfa4304de65",
+  "assertionResults": [
+    {
+      "assertionId": "queue-empty-after-sweep",
+      "status": "pass",
+      "evidenceRefs": [
+        "4f6f3ddc-4635-5b5e-8a80-bb8f1d06682e"
+      ]
+    }
+  ]
+}

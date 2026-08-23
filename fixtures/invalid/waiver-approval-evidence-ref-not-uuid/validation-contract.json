@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "missionId": "invoice-automation",
+  "phaseId": "validation",
+  "contractId": "validation-phase-contract",
+  "assertions": [
+    {
+      "assertionId": "ledger-diff-clean",
+      "kind": "document_evidence",
+      "claim": "The ledger diff document shows no unresolved mismatches.",
+      "evidenceRefs": [
+        "06a9491d-ec54-504d-a14b-c8de9996ab82"
+      ],
+      "waiver": {
+        "waiverId": "ledger-mismatch-waiver",
+        "reason": "The waiver names a non-Paperclip approval evidence identifier.",
+        "approvedBy": "8effebc2-1543-50e3-a646-5ae36f01364e",
+        "approvalEvidenceRef": "not-a-paperclip-id"
+      }
+    }
+  ]
+}

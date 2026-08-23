@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "missionId": "invoice-automation",
+  "phaseId": "validation",
+  "contractId": "validation-phase-contract",
+  "assertions": [
+    {
+      "assertionId": "queue-empty-after-sweep",
+      "kind": "paperclip_evidence",
+      "claim": "The invoice queue contains no unprocessed items after the final sweep.",
+      "evidenceRefs": [
+        "4f6f3ddc-4635-5b5e-8a80-bb8f1d06682e"
+      ]
+    },
+    {
+      "assertionId": "ledger-diff-clean",
+      "kind": "document_evidence",
+      "claim": "The ledger diff document shows no unresolved mismatches.",
+      "evidenceRefs": [
+        "06a9491d-ec54-504d-a14b-c8de9996ab82"
+      ]
+    }
+  ]
+}

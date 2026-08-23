@@ -1,0 +1,29 @@
+{
+  "paperclip": {
+    "repository": "https://github.com/paperclipai/paperclip.git",
+    "auditedCommit": "cc42a67e7e9e8eb183097afc8ff4ebfa694fb3e0",
+    "auditDate": "2026-08-22",
+    "commitDate": "2026-08-22",
+    "nearestTag": "canary/v2026.822.0-canary.3",
+    "pluginApiVersion": 1,
+    "pluginSdkPackageVersion": "1.0.0"
+  },
+  "blockingHostContracts": [
+    {
+      "id": "dynamic-project-create",
+      "summary": "Add a capability-gated, host-side idempotent ctx.projects.create(input) to plugin SDK API v1 with atomic plugin-origin binding and lookup by (companyId, pluginId, idempotencyKey).",
+      "status": "unreleased-upstream"
+    },
+    {
+      "id": "document-base-revision-compare-and-swap",
+      "summary": "Expose the core document service's required baseRevisionId through the plugin protocol, host bridge, and SDK so existing documents can be updated atomically without blind overwrites.",
+      "status": "unreleased-upstream"
+    }
+  ],
+  "disclaimer": [
+    "The audited commit is development metadata only.",
+    "It is not a production compatibility promise.",
+    "Public Mission Control packages must not claim compatibility with an unreleased Paperclip host.",
+    "The minimum host version is set only after both blocking contracts are merged and released."
+  ]
+}

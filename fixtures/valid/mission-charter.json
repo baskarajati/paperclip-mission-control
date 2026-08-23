@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "missionId": "invoice-automation",
+  "title": "Automate invoice processing for the company",
+  "outcome": "Every incoming invoice is captured, validated, and paid without manual data entry.",
+  "constraints": [
+    "All invoice data stays inside the company Paperclip instance.",
+    "Payment execution always requires a human approver."
+  ],
+  "terminalEvidence": [
+    {
+      "assertionId": "final-ledger-report-passed",
+      "description": "The final ledger report matches the accounting export for two consecutive months."
+    }
+  ],
+  "governanceOwner": {
+    "paperclipUserId": "8effebc2-1543-50e3-a646-5ae36f01364e",
+    "role": "human_governance_principal"
+  },
+  "phases": [
+    {
+      "phaseId": "intake",
+      "objective": "Capture every invoice into a normalized queue."
+    },
+    {
+      "phaseId": "validation",
+      "objective": "Validate queued invoices against the ledger."
+    },
+    {
+      "phaseId": "payment",
+      "objective": "Prepare and execute approved payments."
+    }
+  ]
+}

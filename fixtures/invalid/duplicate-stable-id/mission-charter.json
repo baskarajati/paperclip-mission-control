@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "missionId": "invoice-automation",
+  "title": "Automate invoice processing for the company",
+  "outcome": "Every incoming invoice is captured, validated, and paid without manual data entry.",
+  "constraints": [
+    "All invoice data stays inside the company Paperclip instance."
+  ],
+  "terminalEvidence": [
+    {
+      "assertionId": "shared-assertion",
+      "description": "First definition of the shared assertion."
+    },
+    {
+      "assertionId": "shared-assertion",
+      "description": "Second definition reuses the same stable ID."
+    }
+  ],
+  "governanceOwner": {
+    "paperclipUserId": "8effebc2-1543-50e3-a646-5ae36f01364e",
+    "role": "human_governance_principal"
+  },
+  "phases": [
+    {
+      "phaseId": "intake",
+      "objective": "Capture every invoice into a normalized queue."
+    }
+  ]
+}

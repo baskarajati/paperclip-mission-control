@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "companyId": "com_01J9COMPANY",
+  "missionId": "invoice-automation",
+  "missionGoalId": "goal_not_a_uuid_value",
+  "currentPhaseId": "intake",
+  "nextPhaseId": "validation",
+  "nextPhaseLeadAgentId": "agent_not_a_uuid_value",
+  "boundPlanRevisionId": "doc_rev_plan_0007",
+  "boundEvidenceRevisionId": "doc_rev_report_0031",
+  "transitionKey": "mc1:com_01J9COMPANY:invoice-automation:goal_not_a_uuid_value:intake:validation:agent_not_a_uuid_value:doc_rev_plan_0007:doc_rev_report_0031",
+  "projectCreateRequest": {
+    "companyId": "com_01J9COMPANY",
+    "name": "Invoice Automation - Validation Phase",
+    "description": "Execution project for the Validation phase of the Invoice Automation mission.",
+    "status": "backlog",
+    "goalIds": [
+      "goal_not_a_uuid_value"
+    ],
+    "leadAgentId": "agent_not_a_uuid_value",
+    "idempotencyKey": "mc1:com_01J9COMPANY:invoice-automation:goal_not_a_uuid_value:intake:validation:agent_not_a_uuid_value:doc_rev_plan_0007:doc_rev_report_0031"
+  },
+  "requestHash": "b5e61dc37af2c8a22d64881cfc2a35440e62397b687ea127472fc9cb5256bdf5"
+}

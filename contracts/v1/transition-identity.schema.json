@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/baskarajati/paperclip-mission-control/contracts/v1/transition-identity.schema.json",
+  "title": "Transition identity and canonical project-create request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "companyId",
+    "missionId",
+    "missionGoalId",
+    "currentPhaseId",
+    "nextPhaseId",
+    "nextPhaseLeadAgentId",
+    "boundPlanRevisionId",
+    "boundEvidenceRevisionId",
+    "transitionKey",
+    "projectCreateRequest",
+    "requestHash"
+  ],
+  "properties": {
+    "schemaVersion": { "$ref": "common.schema.json#/$defs/schemaVersion1" },
+    "companyId": { "$ref": "common.schema.json#/$defs/paperclipId" },
+    "missionId": { "$ref": "common.schema.json#/$defs/stableId" },
+    "missionGoalId": { "$ref": "common.schema.json#/$defs/paperclipId" },
+    "currentPhaseId": { "$ref": "common.schema.json#/$defs/stableId" },
+    "nextPhaseId": { "$ref": "common.schema.json#/$defs/stableId" },
+    "nextPhaseLeadAgentId": { "$ref": "common.schema.json#/$defs/paperclipId" },
+    "boundPlanRevisionId": { "$ref": "common.schema.json#/$defs/paperclipId" },
+    "boundEvidenceRevisionId": { "$ref": "common.schema.json#/$defs/paperclipId" },
+    "transitionKey": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 255
+    },
+    "projectCreateRequest": { "$ref": "#/$defs/projectCreateRequest" },
+    "requestHash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "$defs": {
+    "projectCreateRequest": {
+      "title": "Canonical project-create request",
+      "description": "Pure function of company, mission, mission goal, phases, lead, and confirmed evidence revisions. No clock, random, locale, or ambient-default values.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "companyId",
+        "name",
+        "description",
+        "status",
+        "goalIds",
+        "leadAgentId",
+        "idempotencyKey"
+      ],
+      "properties": {
+        "companyId": { "$ref": "common.schema.json#/$defs/paperclipId" },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[ -~]+$"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "pattern": "^[ -~]+$"
+        },
+        "status": {
+          "enum": ["backlog"],
+          "description": "Deterministic initial project status for a provisioned phase."
+        },
+        "goalIds": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/paperclipId" },
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "leadAgentId": { "$ref": "common.schema.json#/$defs/paperclipId" },
+        "idempotencyKey": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 255
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/baskarajati/paperclip-mission-control/contracts/v1/validation-contract.schema.json",
+  "title": "Validation contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "missionId", "phaseId", "contractId", "assertions"],
+  "properties": {
+    "schemaVersion": { "$ref": "common.schema.json#/$defs/schemaVersion1" },
+    "missionId": { "$ref": "common.schema.json#/$defs/stableId" },
+    "phaseId": { "$ref": "common.schema.json#/$defs/stableId" },
+    "contractId": { "$ref": "common.schema.json#/$defs/stableId" },
+    "assertions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["assertionId", "kind", "claim", "evidenceRefs"],
+        "properties": {
+          "assertionId": { "$ref": "common.schema.json#/$defs/assertionIdRef" },
+          "kind": {
+            "enum": ["paperclip_evidence", "document_evidence"]
+          },
+          "claim": { "$ref": "common.schema.json#/$defs/humanSummary" },
+          "evidenceRefs": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "$ref": "common.schema.json#/$defs/paperclipId" }
+          },
+          "waiver": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "A waiver requires explicit human approval evidence. Approval fields are checked by semantic validation.",
+            "required": ["waiverId", "reason"],
+            "properties": {
+              "waiverId": { "$ref": "common.schema.json#/$defs/waiverIdRef" },
+              "reason": { "$ref": "common.schema.json#/$defs/humanSummary" },
+              "approvedBy": {
+                "anyOf": [
+                  { "$ref": "common.schema.json#/$defs/paperclipId" },
+                  { "type": "null" }
+                ],
+                "$comment": "Semantic validation requires a non-empty Paperclip user ID for a waived assertion."
+              },
+              "approvalEvidenceRef": {
+                "anyOf": [
+                  { "$ref": "common.schema.json#/$defs/paperclipId" },
+                  { "type": "null" }
+                ],
+                "$comment": "Semantic validation requires a non-empty evidence reference for a waived assertion."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,4 @@
+{
+  "type": "transition-identity",
+  "expectedCode": "MC_NON_CANONICAL_REQUEST"
+}

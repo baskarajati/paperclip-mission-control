@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 2,
+  "missionId": "invoice-automation",
+  "planRevisionId": "694ff4bb-73ee-54e9-b6ec-50e57bf88bb4",
+  "phases": [
+    {
+      "phaseId": "intake",
+      "objective": "Capture every invoice into a normalized queue.",
+      "state": "planned"
+    }
+  ]
+}
