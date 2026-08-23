@@ -12,6 +12,22 @@
 A contributor never accepts its own contract change or its own governance
 change. An independent reader always accepts that class of change.
 
+## Communication between contributors
+
+The project owner commands each contributor directly and relays between them.
+A contributor never opens, drives, or dispatches another contributor's session,
+and never calls a peer agent through a tool.
+
+When a contributor needs work from a peer, such as an independent counter
+design, an adversarial review, or a second opinion from a different model
+family, it writes the request to a file in the repository, reports that the
+request is ready, and names the session that should receive it. The owner pastes
+it. This keeps one paste between the request and the answer, and it keeps every
+exchange visible to the owner.
+
+A contributor that needs a peer answer states the default that applies while the
+answer is pending. An open request without a default is a halt.
+
 ## Merge policy
 
 A contributor may open, review, and merge its own pull request when the change
