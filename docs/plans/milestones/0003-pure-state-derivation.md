@@ -168,36 +168,31 @@ trigger fired.
 **Seat.** Adversarial counterpart, which the roster requires to be a different
 model family from the lead. Codex holds that seat in this project.
 
-**Status: DEGRADED. The consult did not run.** The Codex MCP seat is
-unreachable from this session. Two dispatches returned HTTP 400
-`invalid_request_error`:
+**Channel: the project owner.** The owner commands each agent directly and
+relays between them. A contributor does not open another contributor's session.
+The consult therefore travels as a committed prompt that the owner pastes into a
+Codex session, at `docs/plans/milestones/0003-consult-prompt.md`. It is written
+blind: it states the problem, the constraints, and the canon, and it contains
+none of this plan's answers.
 
-```text
-"The 'gpt-5.6-sol' model is not supported when using Codex with a ChatGPT account."
-"The 'gpt-5.2-codex' model is not supported when using Codex with a ChatGPT account."
-```
+**Status: dispatched to the owner, answer pending.**
 
-`~/.codex/config.toml` sets `model = "gpt-5.6-sol"`. No other different-family
-seat is available to this session. The available subagent models are all
-Claude, and shared weights share blind spots, so a same-family review would be
-a silent skip wearing a consult's name.
-
-**Fallback taken.** The consult prompt is committed verbatim at
-`docs/plans/milestones/0003-consult-prompt.md`. It is one paste into a working
-Codex session. It is written blind: it states the problem, the constraints, and
-the canon, and it does not contain this plan's answers.
+**Correction on the record.** The author first tried to dispatch this consult
+directly to a Codex session over MCP. That was wrong. It would have taken
+control of a session the owner owns and hidden the exchange from him. Both calls
+failed with HTTP 400 before any session started, so no Codex session ran and no
+context was sent. The owner corrected the approach the same day. The committed
+prompt is the primary channel, not a fallback.
 
 **Divergences.** None recorded yet. This section stays open until the
-counter-design returns. Per the skill, agreement between two designs is a
-warning and not a confirmation, so the divergence list must be filled in before
-slices 2 and 3 are accepted.
+counter-design returns. Per the planning contract, agreement between two designs
+is a warning and not a confirmation, so the divergence list must be filled in
+before slices 2 and 3 are accepted.
 
-**Default that fires if the consult does not return.** Implementation waits.
-The slices below are ordered so that waiting costs little: slice 1 is the only
-one whose design is forced by existing contracts, and even it fixes the public
-snapshot shape, so it is held too. If the owner prefers speed over the counter
-design, say so and slice 1 starts immediately with the snapshot type marked
-provisional.
+**Default if the answer does not arrive.** Implementation waits. The slices
+below are ordered so that waiting costs little. If the owner prefers speed over
+the counter-design, slice 1 starts immediately with the snapshot type marked
+provisional, and the author absorbs the rework.
 
 ## Slices
 
