@@ -1,0 +1,4 @@
+{
+  "type": "transition-identity",
+  "expectedCode": "MC_TRANSITION_KEY_TOO_LONG"
+}

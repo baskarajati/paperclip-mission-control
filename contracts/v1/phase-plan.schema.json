@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/baskarajati/paperclip-mission-control/contracts/v1/phase-plan.schema.json",
+  "title": "Phase plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "missionId", "planRevisionId", "phases"],
+  "properties": {
+    "schemaVersion": { "$ref": "common.schema.json#/$defs/schemaVersion1" },
+    "missionId": { "$ref": "common.schema.json#/$defs/stableId" },
+    "planRevisionId": { "$ref": "common.schema.json#/$defs/paperclipId" },
+    "phases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["phaseId", "objective", "state"],
+        "properties": {
+          "phaseId": { "$ref": "common.schema.json#/$defs/stableId" },
+          "objective": { "$ref": "common.schema.json#/$defs/humanSummary" },
+          "state": { "$ref": "common.schema.json#/$defs/phaseState" },
+          "validationContractRef": { "$ref": "common.schema.json#/$defs/stableId" }
+        }
+      }
+    }
+  }
+}

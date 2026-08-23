@@ -1,0 +1,24 @@
+{
+  "companyId": "892939c1-04f2-5de3-8a00-0830f676c226",
+  "missionId": "invoice-automation",
+  "missionGoalId": "3a0c77ec-db9a-5f00-a5a0-381ccc3711a6",
+  "currentPhaseId": "intake",
+  "nextPhaseId": "validation",
+  "nextPhaseLeadAgentId": "bfeb6287-b375-5d81-86b6-c6b812c4682a",
+  "boundPlanRevisionId": "694ff4bb-73ee-54e9-b6ec-50e57bf88bb4",
+  "boundEvidenceRevisionId": "509a5bf9-2ac6-5bee-8335-1cfa4304de65",
+  "schemaVersion": 1,
+  "transitionKey": "mc1:892939c1-04f2-5de3-8a00-0830f676c226:invoice-automation:3a0c77ec-db9a-5f00-a5a0-381ccc3711a6:intake:validation:bfeb6287-b375-5d81-86b6-c6b812c4682a:694ff4bb-73ee-54e9-b6ec-50e57bf88bb4:509a5bf9-2ac6-5bee-8335-1cfa4304de65",
+  "projectCreateRequest": {
+    "companyId": "892939c1-04f2-5de3-8a00-0830f676c226",
+    "name": "Invoice Automation - Validation Phase",
+    "description": "Execution project for the Validation phase of the Invoice Automation mission.",
+    "status": "backlog",
+    "goalIds": [
+      "3a0c77ec-db9a-5f00-a5a0-381ccc3711a6"
+    ],
+    "leadAgentId": "bfeb6287-b375-5d81-86b6-c6b812c4682a",
+    "idempotencyKey": "mc1:892939c1-04f2-5de3-8a00-0830f676c226:invoice-automation:3a0c77ec-db9a-5f00-a5a0-381ccc3711a6:intake:validation:bfeb6287-b375-5d81-86b6-c6b812c4682a:694ff4bb-73ee-54e9-b6ec-50e57bf88bb4:509a5bf9-2ac6-5bee-8335-1cfa4304de65"
+  },
+  "requestHash": "720478d5d168c698e387a5466d7a58c3d2639eb54f4785b9545170329d7b1600"
+}

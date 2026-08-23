@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "missionId": "invoice-automation",
+  "phaseId": "validation",
+  "contractId": "validation-phase-contract",
+  "assertions": [
+    {
+      "assertionId": "queue-empty-after-sweep",
+      "kind": "paperclip_evidence",
+      "claim": "The invoice queue contains no unprocessed items after the final sweep.",
+      "evidenceRefs": [
+        "4f6f3ddc-4635-5b5e-8a80-bb8f1d06682e"
+      ]
+    },
+    {
+      "assertionId": "ledger-diff-clean",
+      "kind": "document_evidence",
+      "claim": "The ledger diff document shows no unresolved mismatches.",
+      "evidenceRefs": [
+        "06a9491d-ec54-504d-a14b-c8de9996ab82"
+      ],
+      "waiver": {
+        "waiverId": "ledger-mismatch-waiver",
+        "reason": "One historical mismatch predates the mission and is tracked in the ledger backlog.",
+        "approvedBy": "8effebc2-1543-50e3-a646-5ae36f01364e",
+        "approvalEvidenceRef": "468d6e06-58ca-5841-87f3-59180d92a131"
+      }
+    }
+  ]
+}

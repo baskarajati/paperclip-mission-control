@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/baskarajati/paperclip-mission-control/contracts/v1/common.schema.json",
+  "title": "Mission Control v1 common definitions",
+  "$defs": {
+    "schemaVersion1": {
+      "type": "integer",
+      "const": 1,
+      "description": "Document schema version. Automation fails closed on unknown versions."
+    },
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "minLength": 2,
+      "maxLength": 64
+    },
+    "paperclipId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "description": "Lowercase RFC 4122 UUID (v1-v5) issued by the Paperclip host for companies, users, goals, agents, projects, revisions, evidence, and interactions."
+    },
+    "humanSummary": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 2000
+    },
+    "isoTimestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "assertionIdRef": {
+      "$ref": "#/$defs/stableId"
+    },
+    "findingIdRef": {
+      "$ref": "#/$defs/stableId"
+    },
+    "waiverIdRef": {
+      "$ref": "#/$defs/stableId"
+    },
+    "phaseState": {
+      "enum": [
+        "planned",
+        "provisioning",
+        "active",
+        "validating",
+        "awaiting_confirmation",
+        "completed",
+        "waived",
+        "blocked",
+        "cancelled"
+      ]
+    }
+  }
+}

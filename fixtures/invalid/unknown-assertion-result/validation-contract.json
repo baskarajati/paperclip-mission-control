@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "missionId": "invoice-automation",
+  "phaseId": "validation",
+  "contractId": "validation-phase-contract",
+  "assertions": [
+    {
+      "assertionId": "ledger-diff-clean",
+      "kind": "document_evidence",
+      "claim": "The ledger diff document shows no unresolved mismatches.",
+      "evidenceRefs": [
+        "06a9491d-ec54-504d-a14b-c8de9996ab82"
+      ],
+      "waiver": {
+        "waiverId": "ledger-mismatch-waiver",
+        "reason": "One historical mismatch predates the mission.",
+        "approvedBy": "8effebc2-1543-50e3-a646-5ae36f01364e",
+        "approvalEvidenceRef": "468d6e06-58ca-5841-87f3-59180d92a131"
+      }
+    }
+  ]
+}

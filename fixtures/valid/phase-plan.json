@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "missionId": "invoice-automation",
+  "planRevisionId": "694ff4bb-73ee-54e9-b6ec-50e57bf88bb4",
+  "phases": [
+    {
+      "phaseId": "intake",
+      "objective": "Capture every invoice into a normalized queue.",
+      "state": "completed",
+      "validationContractRef": "intake-contract"
+    },
+    {
+      "phaseId": "validation",
+      "objective": "Validate queued invoices against the ledger.",
+      "state": "validating",
+      "validationContractRef": "validation-phase-contract"
+    },
+    {
+      "phaseId": "payment",
+      "objective": "Prepare and execute approved payments.",
+      "state": "planned"
+    }
+  ]
+}

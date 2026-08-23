@@ -1,0 +1,18 @@
+{
+  "name": "paperclip-mission-control",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Repository-owned v1 data contracts and executable semantic validation for Paperclip Mission Control.",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=24.11.0"
+  },
+  "scripts": {
+    "test": "node --test \"tests/contracts/*.test.mjs\""
+  },
+  "devDependencies": {
+    "ajv": "8.20.0"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/baskarajati/paperclip-mission-control/contracts/v1/mission-charter.schema.json",
+  "title": "Mission charter",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "missionId", "title", "outcome", "constraints", "terminalEvidence", "governanceOwner", "phases"],
+  "properties": {
+    "schemaVersion": { "$ref": "common.schema.json#/$defs/schemaVersion1" },
+    "missionId": { "$ref": "common.schema.json#/$defs/stableId" },
+    "title": { "$ref": "common.schema.json#/$defs/humanSummary" },
+    "outcome": { "$ref": "common.schema.json#/$defs/humanSummary" },
+    "constraints": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/humanSummary" }
+    },
+    "terminalEvidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["assertionId", "description"],
+        "properties": {
+          "assertionId": { "$ref": "common.schema.json#/$defs/assertionIdRef" },
+          "description": { "$ref": "common.schema.json#/$defs/humanSummary" }
+        }
+      }
+    },
+    "governanceOwner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["paperclipUserId", "role"],
+      "properties": {
+        "paperclipUserId": { "$ref": "common.schema.json#/$defs/paperclipId" },
+        "role": {
+          "enum": ["human_governance_principal"]
+        }
+      }
+    },
+    "phases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["phaseId", "objective"],
+        "properties": {
+          "phaseId": { "$ref": "common.schema.json#/$defs/stableId" },
+          "objective": { "$ref": "common.schema.json#/$defs/humanSummary" }
+        }
+      }
+    },
+    "extensionPoints": {
+      "type": "array",
+      "description": "Explicit extension point. Unknown fields fail validation elsewhere; forward-compatible additions are declared here by key.",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+      }
+    }
+  }
+}
