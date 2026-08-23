@@ -38,6 +38,7 @@
       "$ref": "#/$defs/stableId"
     },
     "phaseState": {
+      "description": "Derived phase state. The reconciler computes it and the plugin database checkpoints it. It never appears inside a Paperclip document, because a document revision binds both human confirmations and transition keys. See issue #8.",
       "enum": [
         "planned",
         "provisioning",
