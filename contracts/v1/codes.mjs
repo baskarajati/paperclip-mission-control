@@ -20,4 +20,6 @@ export const MC = Object.freeze({
   CONTRACT_REFERENCE_MISSING: "MC_CONTRACT_REFERENCE_MISSING",
   /** A document body contradicts the host revision that carries it. */
   STALE_EVIDENCE: "MC_STALE_EVIDENCE",
+  /** A confirmation policy, target, principal, or status is not one this contract accepts. */
+  CONFIRMATION_INVALID: "MC_CONFIRMATION_INVALID",
 });
