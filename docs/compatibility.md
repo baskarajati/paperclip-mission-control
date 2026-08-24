@@ -17,9 +17,18 @@ The first alpha will test:
 - Current Paperclip stable release
 - Current Paperclip master or canary as a non-blocking forecast lane
 
-Development currently audits Paperclip master commit
-`cc42a67e7e9e8eb183097afc8ff4ebfa694fb3e0`. That commit is not a public
-compatibility promise.
+The general architecture audit used Paperclip master commit
+`cc42a67e7e9e8eb183097afc8ff4ebfa694fb3e0`. The later Milestone 2 host-enforcement
+audit at `a14e51d592dd22e2e830e01f94e6783d55df9963` supersedes it for M2 planning.
+Neither commit is a public compatibility promise or an integration lock.
+
+Before a qualifying stable release exists, private local development may use
+only the exact reviewed integration commit recorded by the repository's
+development lock. The lock is an installation precondition, not a supported
+version range. Preflight also proves a fresh build, the expected applied migration
+journal, and the running host's required capability response. A changed base,
+patch set, build identity, migration state, or capability result requires a new
+review and conformance run.
 
 ## Required host capability
 
@@ -34,6 +43,10 @@ Current plugin document `upsert` omits the core service's required
 without conflict even though the SDK fake accepts the write. Public release also
 requires the SDK/protocol bridge to expose that compare-and-swap field.
 
+The private-local lane supplies these contracts by composing their ordinary
+Paperclip contribution commits on a reviewed fork branch. Mission Control uses
+the resulting SDK directly. It does not emulate either contract in plugin code.
+
 ## Delivery semantics
 
 The current plugin event bus is in-process and fire-and-forget despite the plugin
@@ -45,7 +58,10 @@ that explicitly enable Mission Control.
 
 - Track unrelated Paperclip defects separately.
 - Prefer a fixed minimum host version over compatibility shims.
-- If a temporary shim is unavoidable, require an upstream issue, explicit opt-in, idempotency, and a removal version.
+- Do not put a Paperclip compatibility shim of any kind in Mission Control.
+  Required contracts and unrelated host defects remain separate, reviewable
+  Paperclip contributions that may compose into the locked integration branch;
+  otherwise Mission Control fails closed.
 
 ## State ownership
 
