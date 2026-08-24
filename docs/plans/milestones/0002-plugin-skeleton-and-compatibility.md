@@ -293,7 +293,12 @@ dependencies require an explicit plan amendment; pure policy code has none.
 
 - only allowlisted runtime/documentation paths are present;
 - no tests, fixtures containing invalid payloads, source maps, local paths,
-  worktrees, environment files, credentials, or development metadata ship;
+  worktrees, environment files, credentials, or unreviewed development
+  files/metadata ship;
+- while M2A remains private, packed `package.json` may retain only the exact
+  reviewed build/typecheck/lint/test scripts and pinned TypeScript development
+  dependency; lifecycle scripts, local dependency references, and any other
+  package metadata fail verification;
 - manifest/worker entrypoints exist only in M2B;
 - package metadata, license, repository, engines, and files allowlist agree;
 - the package remains private before the M2B release gate;
