@@ -24,8 +24,10 @@ compatibility promise.
 Before a qualifying stable release exists, private local development may use
 only the exact reviewed integration commit recorded by the repository's
 development lock. The lock is an installation precondition, not a supported
-version range. A changed base or patch set requires a new review and conformance
-run.
+version range. Preflight also proves a fresh build, the expected applied migration
+journal, and the running host's required capability response. A changed base,
+patch set, build identity, migration state, or capability result requires a new
+review and conformance run.
 
 ## Required host capability
 
@@ -55,8 +57,10 @@ that explicitly enable Mission Control.
 
 - Track unrelated Paperclip defects separately.
 - Prefer a fixed minimum host version over compatibility shims.
-- Do not use a temporary plugin-side shim for Mission Control's required host
-  contracts. Use the locked integration branch or fail closed.
+- Do not put a Paperclip compatibility shim of any kind in Mission Control.
+  Required contracts and unrelated host defects remain separate, reviewable
+  Paperclip contributions that may compose into the locked integration branch;
+  otherwise Mission Control fails closed.
 
 ## State ownership
 

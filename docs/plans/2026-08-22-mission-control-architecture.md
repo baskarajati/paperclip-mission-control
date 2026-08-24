@@ -262,8 +262,10 @@ that release as `minimumHostVersion`.
 Before that release, ADR 0005 permits a private local installation only against
 an exact, reviewed Paperclip integration branch containing the same proposed
 contracts and host enforcement. A repository-owned development lock binds the
-Paperclip base, ordered patch commits, resulting integration commit, and SDK
-identity. Preflight rejects a dirty or mismatched checkout. This lane is local
+Paperclip base, ordered patch commits, resulting integration commit, SDK
+identity, expected migration journal, fresh-build artifact identity, and
+required capability response. Preflight rejects a dirty or mismatched checkout,
+stale build, migration drift, or failed live capability probe. This lane is local
 development evidence, not a public compatibility promise, and it introduces no
 plugin-side shim, internal HTTP call, server import, or direct table write.
 
@@ -322,6 +324,11 @@ uses Paperclip's native interaction surface.
 - Never auto-enable a routine, grant an agent budget, or wake an agent during
   installation.
 - Installation, upgrade, reset, retry, and uninstall are safe to repeat.
+- Private-local go-live is performed by the owner only after a verified backup
+  restore, mutation-free dry run, and disposable or non-critical test-company
+  trial. Rollback disables the plugin before reverting host code; additive host
+  schema may remain inert, and any code/schema/lock mismatch blocks reactivation
+  and mutation.
 - Authoritative mission input documents are never overwritten. Plugin-owned
   document updates pass the exact observed `baseRevisionId`; a conflict causes a
   fresh derivation and bounded retry, then a visible blocked state.
