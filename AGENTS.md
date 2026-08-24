@@ -17,7 +17,11 @@ Co-Authored-By: (the agent model's name and attribution byline)
 
 - Treat approved files under `docs/plans/` and `docs/decisions/` as authoritative.
 - Work only on the assigned milestone and acceptance criteria.
-- Do not push, publish, release, install into a live instance, or mutate Paperclip.
+- Follow `docs/supervision-protocol.md` for push and pull-request authority. Never
+  publish or release without the separate owner release gate.
+- Private-local installation, configuration, and company mutation under ADR 0005
+  are owner-operated go-live actions. Agents may prepare and verify the artifacts
+  and commands, but they do not execute those actions.
 - Use an isolated worktree for implementation.
 - Stop on ambiguous ownership, unsupported host capabilities, or conflicting state.
 
