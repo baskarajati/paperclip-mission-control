@@ -1,12 +1,31 @@
 # Agent Instructions
 
-`CLAUDE.md` is a symlink to this file, so every agent reads one set of
-instructions. Keep this file vendor-neutral.
+- `CLAUDE.md` is a symlink to this file.
+- Keep this file concise, vendor-neutral, and free of transient PR status.
 
-## Package Manager
+## Mission
 
-- Use **pnpm** after the package workspace is approved.
-- Do not add runtime dependencies before architecture approval.
+- Build one public Paperclip plugin that carries a governed mission across
+  projects: derive completion evidence, obtain human confirmation, provision the
+  next phase exactly once, and close the terminal mission with a final report.
+- Prefer the smallest end-to-end slice that advances that continuity loop.
+- Do not describe contracts, package scaffolding, or fake-harness evidence as a
+  working continuity system.
+
+## Package Manager and Commands
+
+- Use **pnpm** with the version declared by `packageManager`.
+- Require `node --version` to satisfy `engines.node`; never hardcode a local Node
+  installation path.
+- Install with `pnpm install --frozen-lockfile`.
+- Inspect the checked-out `package.json` scripts. Run `pnpm verify` when it
+  exists; otherwise run every relevant available gate and `pnpm test`.
+- Runtime dependencies require an accepted plan amendment.
+- Run a focused contract test with:
+
+```bash
+node --test --test-name-pattern="<name>" tests/contracts/contracts.test.mjs
+```
 
 ## Commit Attribution
 
@@ -18,141 +37,64 @@ Co-Authored-By: (the agent model's name and attribution byline)
 
 ## Authority
 
-- Treat approved files under `docs/plans/` and `docs/decisions/` as authoritative.
-- Work only on the assigned milestone and acceptance criteria.
-- Follow `docs/supervision-protocol.md` for push and pull-request authority. Never
-  publish or release without the separate owner release gate.
-- Private-local installation, configuration, and company mutation under ADR 0005
-  are owner-operated go-live actions. Agents may prepare and verify the artifacts
-  and commands, but they do not execute those actions.
-- Use an isolated worktree for implementation.
-- Stop on ambiguous ownership, unsupported host capabilities, or conflicting state.
+- Merged git state and accepted files under `docs/plans/` and `docs/decisions/`
+  are authority. Open PRs and review notes are provisional until accepted.
+- Read the applicable milestone plan plus:
+  - `docs/plans/2026-08-22-mission-control-architecture.md`
+  - `docs/plans/2026-08-22-mission-control-implementation.md`
+  - `docs/compatibility.md`
+  - `docs/testing/traceability.md`
+  - `docs/supervision-protocol.md`
+- Work only on the assigned milestone and acceptance criteria in an isolated
+  worktree. Commit nothing directly to `main`.
+- Stop on ambiguous ownership, unsupported host capabilities, conflicting
+  authority, or evidence that invalidates the plan.
 
-## Commands
+## Collaboration and Merge Gates
 
-`CLAUDE.md` is a symlink to this file. Every agent reads the same instructions.
+- Codex and Claude Opus 5 are peer contributors. The project owner relays work
+  between their sessions; neither contributor dispatches or drives the other.
+- Ox Alpha works only as the bounded implementor or fresh read-only reviewer
+  defined by `docs/supervision-protocol.md`.
+- A contributor never accepts its own change to contracts, plans, decisions,
+  `AGENTS.md`, the supervision protocol, or an upstream contribution.
+- Follow `docs/supervision-protocol.md` for branch, PR, review, merge, and
+  evidence requirements.
+- Never publish or release without the separate owner release gate.
+- ADR 0005 local installation, configuration, and company mutation are
+  owner-operated actions. Agents prepare and verify artifacts and commands but
+  do not execute those actions.
 
-**Check the runtime first.** The default `node` on this machine is v22, which is
-below the `engines.node` floor of `>=24.11.0`. `pnpm` does not enforce the floor,
-so the suite runs green on an unsupported runtime and the reporter output even
-looks different. Prefix commands to select Node 25:
+## Architecture Invariants
 
-```bash
-PATH=/opt/homebrew/bin:$PATH node --version   # expect v24.11.0 or newer
-```
-
-```bash
-PATH=/opt/homebrew/bin:$PATH pnpm install --frozen-lockfile
-PATH=/opt/homebrew/bin:$PATH pnpm test        # whole suite
-```
-
-Run one test by name, which `pnpm test` cannot do:
-
-```bash
-PATH=/opt/homebrew/bin:$PATH node --test \
-  --test-name-pattern="transition keys stay within 255" \
-  tests/contracts/contracts.test.mjs
-```
-
-There is no build step and no linter. `test` is the only script. CI runs the
-same two commands on Node 24 and Node 25, plus a guard that fails when
-`package.json` declares any runtime dependency, plus `git diff --check` over the
-pull-request diff.
-
-## Architecture rules
-
-- Paperclip is the source of truth for goals, projects, issues, documents, interactions, approvals, budgets, and runs.
-- Use documented Paperclip plugin SDK and HTTP contracts only.
-- Do not import Paperclip server internals or write directly to Paperclip tables.
-- Make event handling idempotent and reconciliation-based.
-- Fail closed when compatibility cannot be established.
-
-## How the system fits together
-
-### Two repositories, one product
-
-Mission Control is a Paperclip plugin, never a fork (ADR 0001). It needs two
-host capabilities that upstream has not released: idempotent dynamic
-`projects.create`, and `baseRevisionId` on plugin document upsert. Until both
-ship in one Paperclip release, this repository can build pure contracts and
-derivation only. It cannot publish.
-
-Upstream work happens in sibling worktrees beside this one, against
-`paperclipai/paperclip` with a `baskarajati` fork remote.
-`dev/paperclip-host-baseline.json` pins the audited upstream commit. That commit
-is development metadata, not a compatibility promise.
-
-### The transition identity chain
-
-This is the load-bearing concept, and it spans several files. Read it before
-changing any contract.
-
-```
-transition identity  ->  transitionKey()  ->  projectCreateRequest.idempotencyKey
-        |                                              -> host idempotency key
-        +-- boundPlanRevisionId, boundEvidenceRevisionId
-                     -> also the target revisions a human confirmation binds
-```
-
-The same bound revisions do two jobs. They mint the host idempotency key, and
-they gate the human confirmation. The host expires a pending confirmation when
-its target document gains a revision. So a write to a bound document does two
-damaging things at once: it cancels the approval the transition waits for, and
-it mints a new idempotency key, which makes the host create a second project for
-one phase.
-
-The rule that follows: **derived state never lives in a Paperclip document whose
-revision binds a confirmation or a transition key.** Phase state belongs in the
-plugin database. Issue #8 is the defect that established this.
-
-### Contracts, fixtures, tests
-
-- `contracts/v1/*.schema.json` hold shape only, JSON Schema 2020-12, every
-  object `additionalProperties: false`.
-- `contracts/validator.mjs` composes Ajv with the semantic rules JSON Schema
-  cannot express. It owns the `MC_*` error-code vocabulary. Add a code here or
-  nowhere.
-- `contracts/v1/canonical.mjs` is pure: canonical JSON, SHA-256, the transition
-  key, and the canonical project-create request. It imports `node:crypto` and
-  nothing else. Never write a second serializer or a second hash.
-- `fixtures/valid/` has one document per contract. `fixtures/invalid/<defect>/`
-  holds a realistic payload plus a sibling `expected.json` naming the stable code
-  it must fail with. The expected code stays outside the payload so the payload
-  stays realistic. A pair fixture sets `"type": "pair"` and supplies both the
-  validation contract and the report.
-
-A negative fixture must fail for the reason it claims. Check that it is not
-passing on an unrelated schema violation.
-
-### Where authority lives
-
-| Location | Role |
-| --- | --- |
-| `docs/plans/`, `docs/decisions/` | Authoritative. Cite them; do not re-litigate them |
-| `docs/plans/milestones/` | One bounded brief or plan per milestone |
-| `docs/reviews/` | Findings and reconciliations, including rejected ones |
-| `docs/testing/traceability.md` | Every architecture invariant mapped to a test and a status: `covered`, `planned`, or `blocked-upstream` |
-| `docs/compatibility.md` | Host version policy and the known host gaps |
-| `docs/supervision-protocol.md` | Roles, merge policy, git discipline, and how a request reaches a peer agent |
-
-### Ratified facts that look like open questions
-
-Check here before proposing a design that re-decides one of these.
-
-- Phase order is document order. The architecture ratifies "ordered phases". No
-  ordering field exists, and none is needed. The terminal phase is the last one.
-- Plugin events are latency hints, not a delivery contract. The five-minute
-  sweep is the correctness path.
-- A human accepts every phase transition in v1. The plugin never resolves its
-  own confirmation.
-- Paperclip owns business truth. The plugin owns orchestration mechanics only:
-  transition keys, receipts, leases, retry metadata, schema versions.
-- Unknown schema versions, duplicate IDs, missing evidence, conflicting
-  evidence, and ambiguous ownership all fail closed.
+- Paperclip owns business truth; the plugin owns orchestration mechanics only.
+- Mission Control is a plugin, not a fork. Use documented SDK/HTTP contracts;
+  never use a plugin-side compatibility shim, server-internal import, internal
+  HTTP route, or direct Paperclip table write.
+- Private-local and public execution use one plugin code path. The local lane
+  requires the exact ADR 0005 source/build/migration/runtime lock and preflight.
+- Events are latency hints. The periodic level-triggered sweep is the correctness
+  and recovery path.
+- Every v1 phase transition requires current evidence and explicit human
+  confirmation. The plugin never resolves its own confirmation.
+- Never write derived state into a document whose revision binds a confirmation
+  or transition identity.
+- Phase order is the mission-charter array order. The phase plan must contain the
+  same phase IDs in the same order.
+- Reuse the repository's canonical serializer/hash and the code registry owned
+  by the validation or derivation layer; do not create parallel implementations.
+- Unknown versions, stale or conflicting evidence, duplicate IDs, open hard
+  blockers, and ambiguous ownership fail closed.
 
 ## Verification
 
-- Write a failing test before behavior changes. Quote the red run, then the
-  green run. A red run that fails for an unrelated reason proves nothing.
-- Report only commands that actually ran and their results.
-- Follow `docs/supervision-protocol.md` for milestone handoff.
+- For behavior changes, first capture a failing test for the intended reason,
+  then the passing run.
+- A negative fixture must fail for its declared defect, not an unrelated schema
+  error.
+- SDK fakes do not prove real-host authorization, compatibility, concurrency,
+  confirmation, document-CAS, installation, or idempotency semantics.
+- Update `docs/testing/traceability.md` when an invariant's evidence or status
+  changes.
+- Report only commands actually run, exact results, compatibility versions,
+  remaining risks, and unvalidated live/manual gates.
