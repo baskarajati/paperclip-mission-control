@@ -53,6 +53,9 @@ jobs:
       - name: Run the workspace test suite
         run: pnpm test
 
+      - name: Verify packed private package boundary
+        run: pnpm verify:package
+
       - name: Audit production dependencies
         run: pnpm audit:prod
 
