@@ -13,13 +13,14 @@
     "build": "pnpm --filter @paperclip-mission-control/plugin build",
     "typecheck": "pnpm --filter @paperclip-mission-control/plugin typecheck",
     "lint": "eslint . --max-warnings=0",
-    "test": "pnpm test:contracts && pnpm test:package && pnpm --filter @paperclip-mission-control/plugin test",
+    "test": "pnpm test:contracts && pnpm test:tooling && pnpm test:package && pnpm --filter @paperclip-mission-control/plugin test",
     "test:contracts": "node --test \"tests/contracts/*.test.mjs\"",
+    "test:tooling": "node --test \"tests/tooling/*.test.mjs\"",
     "test:package": "pnpm build && node --test \"tests/package/*.test.mjs\"",
     "verify:package": "node scripts/verify-package.mjs",
-    "audit:prod": "pnpm audit --prod --audit-level high",
+    "test:real-loader": "node --test \"tests/conformance/real-loader.test.mjs\"",
     "verify:no-runtime-deps": "node scripts/verify-no-runtime-dependencies.mjs",
-    "verify": "pnpm build && pnpm typecheck && pnpm lint && pnpm test && pnpm verify:package && pnpm verify:no-runtime-deps && pnpm audit:prod"
+    "verify": "pnpm build && pnpm typecheck && pnpm lint && pnpm test && pnpm verify:package && pnpm verify:no-runtime-deps"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

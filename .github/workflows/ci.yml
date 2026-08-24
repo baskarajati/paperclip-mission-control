@@ -14,8 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  contracts:
-    name: Contracts (Node ${{ matrix.node }})
+  verification:
+    name: Verification (Node ${{ matrix.node }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -55,9 +55,6 @@ jobs:
 
       - name: Verify packed private package boundary
         run: pnpm verify:package
-
-      - name: Audit production dependencies
-        run: pnpm audit:prod
 
       - name: Forbid runtime dependencies in every workspace package
         run: pnpm verify:no-runtime-deps

@@ -1,10 +1,13 @@
 import { readdirSync, readFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const packageFiles = [
-  "package.json",
-  ...readdirSync("packages", { withFileTypes: true })
+  join(root, "package.json"),
+  ...readdirSync(join(root, "packages"), { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
-    .map((entry) => `packages/${entry.name}/package.json`),
+    .map((entry) => join(root, `packages/${entry.name}/package.json`)),
 ];
 
 const violations = packageFiles.flatMap((file) => {
