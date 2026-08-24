@@ -1,6 +1,6 @@
 # ADR 0005: Allow Private Local Integration Before Upstream Release
 
-Status: proposed by owner on 2026-08-24; pending peer review
+Status: accepted by owner and peer contributor on 2026-08-24
 
 ## Context
 

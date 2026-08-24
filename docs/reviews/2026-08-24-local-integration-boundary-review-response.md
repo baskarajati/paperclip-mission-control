@@ -37,6 +37,7 @@ and Paperclip source.
 
 ## Acceptance gate
 
-These changes implement the requested architecture corrections. PR #21 still
-requires the peer contributor to confirm the revised diff before merge because
-it changes an ADR, accepted plans, compatibility policy, and `AGENTS.md`.
+These changes implement the requested architecture corrections. The project
+owner relayed the peer contributor's acceptance of the revised diff on
+2026-08-24, satisfying the second-reader gate for the ADR, accepted plans,
+compatibility policy, and `AGENTS.md`.
