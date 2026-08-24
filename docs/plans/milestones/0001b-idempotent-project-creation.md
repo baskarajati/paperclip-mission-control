@@ -13,9 +13,10 @@ M1B is create-only. It does not expose `projects.update`, make the HTTP route
 idempotent, or accept workspace, execution-policy, environment, secret,
 archival, pause, actor, identifier, timestamp, or arbitrary database fields.
 
-This plan was audited against Paperclip `master` commit
-`63df7ad2b3b26e3684e322d421d767f3f107635e`. The implementation brief must
-repeat the audit against the approved upstream head.
+This plan was re-audited against Paperclip `master` commit
+`4ffa8de4e2ef4c86f101be6b21ffc1f3c75caa61`. The implementation brief is
+`0001b-current-upstream-implementation-brief.md`. A changed implementation base
+requires another source audit before work begins.
 
 ## Existing upstream work and precedent
 
@@ -68,6 +69,7 @@ type PluginProjectCreateInput = {
     description?: string | null;
     status?: "backlog" | "planned" | "in_progress" | "completed" | "cancelled";
     goalIds?: string[];
+    leadAgentId?: string | null;
     targetDate?: string | null;
     color?: string | null;
     icon?: ProjectIconName | null;
@@ -75,8 +77,8 @@ type PluginProjectCreateInput = {
 };
 
 type PluginProjectCreateResult =
-  | { status: "created"; project: Project }
-  | { status: "replayed"; project: Project }
+  | { status: "created"; projectId: string }
+  | { status: "replayed"; projectId: string }
   | { status: "conflict"; projectId: string | null }
   | { status: "gone"; projectId: null };
 
@@ -92,6 +94,12 @@ Expected key-reuse outcomes are values, not thrown HTTP errors, because current
 worker RPC maps host errors without an approved numeric plugin error code to
 `INTERNAL_ERROR`. Schema, authorization, capability, and infrastructure failures
 remain errors.
+
+The mutation result returns only the project ID. It must not return Paperclip's
+full `Project`, because that type includes environment, workspace, execution
+policy, pause, archive, and other read-side fields. A plugin needs
+`projects.read` and a separate `ctx.projects.get` call to read the created
+project. `projects.create` does not grant an implicit project-read capability.
 
 The idempotency key is trimmed, normalized to Unicode NFC, non-empty, and at
 most 255 characters. SDK documentation must require a key derived from durable
@@ -110,14 +118,16 @@ payload and calls the same operation; M1B does not add `getCreated`.
   request company.
 - Scope idempotency with the host's installed `pluginId`; the caller cannot
   supply or override plugin identity.
-- On a first create only, validate every `goalId` belongs to the request company.
+- On a first create only, validate every `goalId` and a non-null `leadAgentId`
+  belong to the request company.
 - The plugin activity actor is the installed plugin. No caller-supplied actor,
   user, agent, or run attribution is accepted.
 
-The narrow DTO intentionally excludes `leadAgentId`, workspace references,
-workspace commands, `env`, `executionWorkspacePolicy`, `archivedAt`, `pausedAt`,
-and `pauseReason`. Supporting any excluded field requires a later public design
-that preserves its complete authorization and lifecycle contract.
+The narrow DTO intentionally excludes workspace references, workspace commands,
+`env`, `executionWorkspacePolicy`, `archivedAt`, `pausedAt`, and `pauseReason`.
+`leadAgentId` is an organizational field and is company-validated on a binding
+miss. Supporting any excluded field requires a later public design that
+preserves its complete authorization and lifecycle contract.
 
 ## Stable request identity and replay order
 
@@ -228,7 +238,9 @@ reads compiled `dist/schema/*.js`.
 
 - missing capability and missing/mismatched invocation company scope fail;
 - runtime unknown/protected fields fail strict parsing;
-- cross-company goal IDs fail without mutation;
+- create and replay results contain only the discriminant and project ID, with no
+  full-project or read-side fields;
+- cross-company goal IDs or lead-agent IDs fail without mutation;
 - two requested names with the same derived shortname preserve Paperclip's
   unique URL-key naming behavior;
 - valid creation persists one project, normalized goal set, binding, and plugin
