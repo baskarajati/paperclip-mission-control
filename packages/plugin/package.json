@@ -4,7 +4,13 @@
   "private": true,
   "description": "Private M2A package shell; Paperclip plugin entrypoints begin in M2B.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/baskarajati/paperclip-mission-control.git",
+    "directory": "packages/plugin"
+  },
   "type": "module",
+  "files": ["dist"],
   "engines": {
     "node": ">=24.11.0"
   },
