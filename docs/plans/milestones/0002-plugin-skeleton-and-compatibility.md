@@ -159,15 +159,26 @@ M2B-1 creates a repository-owned development lock that records:
 - expected core migration-journal hashes, including the M1B migration;
 - commands that freshly build Paperclip and the SDK, plus the reviewed artifact
   identities produced by that build;
-- required manifest capabilities and the expected live capability-probe result;
+- required manifest capabilities and the expected host compatibility-validation
+  outcome;
 - exact conformance commands and their accepted result format.
 
 Preflight fails closed when either repository is dirty or mismatched, a patch is
 missing or reordered, the build is stale, the applied Paperclip migration journal
-differs, or the running host probe does not match. It runs again after restart,
-package replacement, base refresh, downgrade, and rollback. The go-live evidence
-records the observed migration journal and probe output; the static lock never
-claims to attest live state by itself.
+differs, or the host-owned pre-spawn compatibility result does not match. Static
+source, SDK, build, and migration checks belong to the repository preflight.
+There is no plugin-owned live capability probe: after the owner triggers the
+documented install or enable operation, Paperclip's loader owns the live check
+and must validate the refreshed manifest before worker startup. Its result is
+returned by that operation, persisted as plugin `status` and `lastError`, and
+read through the documented plugin-detail or plugin-health endpoint. The owner
+records that operator-visible result in the conformance evidence. Host
+validation and result persistence run again on every activation path after
+restart, package replacement, base refresh, downgrade, and rollback; the owner
+then reads and records the result. The static lock never claims to attest live
+state by itself. If the host cannot expose this result through those public
+operator interfaces, M2B stops; plugin code must not inspect the internal
+initialize protocol.
 
 The owner explicitly triggers each M2B-1/M2B-2 installation into a disposable
 conformance environment after its lock and preflight pass. Agents may prepare
@@ -228,8 +239,10 @@ by company ID:
 - `onConfigChanged(companyId, config)` rejects a missing/null company scope,
   strictly parses the payload, and replaces one entry;
 - missing, invalid, or `enabled !== true` entries are excluded from sweeps;
-- every accepted config change increments an in-memory generation for that
-  company;
+- each accepted delivery derives the effective policy tuple
+  `{ valid, enabled }`; the in-memory generation increments only when that tuple
+  changes, while an equivalent valid rewrite or equivalent invalid rewrite
+  preserves the current generation;
 - the scheduled job snapshots `{ companyId, generation }` for enabled entries
   only, deduplicated and sorted by company ID;
 - the reconcile boundary rechecks that the same company is still enabled at the
@@ -409,7 +422,7 @@ real-host invariant to `covered`.
   SDK and integration commit recorded by the development lock.
 - Private-lane preflight rejects SDK/host skew, partial or reordered patches,
   stale builds, migration-journal drift, base refresh with a stale lock, and a
-  missing or changed runtime capability response.
+  missing or changed host compatibility-validation result.
 - Restart repeats lock and runtime verification. A host downgrade or rollback
   with additive schema left in place disables activation and mutates nothing.
 - Soft uninstall/reinstall registers exactly one instance job and one copy of
@@ -434,8 +447,9 @@ real-host invariant to `covered`.
 - Direct proactive and managed-resource mutation calls for disabled, malformed,
   and unconfigured companies are denied by the host even if the worker is
   malicious or defective.
-- Disabling or changing a company after selection invalidates its generation
-  token before any later mutation boundary.
+- Changing a company's effective `{ valid, enabled }` policy after selection
+  invalidates its generation token before any later mutation boundary; an
+  equivalent config delivery preserves the token and cannot starve the sweep.
 - Restart reconstructs enabled scopes from host config delivery.
 - Managed steward and routine declarations remain paused, budget zero, with the
   routine trigger disabled.
@@ -452,7 +466,9 @@ real-host invariant to `covered`.
 1. **M2A-1: workspace and toolchain.** Add workspace files, plugin package shell,
    build/typecheck/lint/test scripts, and CI without changing runtime behavior.
 2. **M2A-2: pure policy.** Add failing tests, then config and sweep-selection
-   functions.
+   functions. Tests must prove that valid and invalid effective-policy changes
+   invalidate tokens while equivalent valid and equivalent invalid rewrites do
+   not bump generation or cancel an in-flight token.
 3. **M2A-3: package guard.** Add tarball allowlist, negative leak fixtures, and
    the real-loader rejection/no-installed-record test pinned to the audited
    Paperclip base named in this plan.
