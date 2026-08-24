@@ -17,9 +17,10 @@ The first alpha will test:
 - Current Paperclip stable release
 - Current Paperclip master or canary as a non-blocking forecast lane
 
-Development currently audits Paperclip master commit
-`cc42a67e7e9e8eb183097afc8ff4ebfa694fb3e0`. That commit is not a public
-compatibility promise.
+The general architecture audit used Paperclip master commit
+`cc42a67e7e9e8eb183097afc8ff4ebfa694fb3e0`. The later Milestone 2 host-enforcement
+audit at `a14e51d592dd22e2e830e01f94e6783d55df9963` supersedes it for M2 planning.
+Neither commit is a public compatibility promise or an integration lock.
 
 Before a qualifying stable release exists, private local development may use
 only the exact reviewed integration commit recorded by the repository's

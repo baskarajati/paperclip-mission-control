@@ -110,7 +110,10 @@ The minimum host version remains unset in M2A and in the private M2B-1/M2B-2
 development artifacts. The exact value is written once in M2B-3, from the first
 stable Paperclip release containing all upstream contracts and host enforcement
 prerequisites. A canary tag or git SHA is not a minimum supported version, and
-M2B-1/M2B-2 make no public compatibility claim.
+M2B-1/M2B-2 make no public compatibility claim. "Unset" means the optional
+`minimumHostVersion` and legacy `minimumPaperclipVersion` fields are both omitted,
+which validates without a cast against the audited SDK schema. Package
+verification rejects either field before M2B-3.
 
 Current Paperclip does not expose `hostVersion`, plugin API version, or a host
 capability inventory through the public `PluginContext`. The values exist in the
@@ -166,14 +169,17 @@ package replacement, base refresh, downgrade, and rollback. The go-live evidence
 records the observed migration journal and probe output; the static lock never
 claims to attest live state by itself.
 
-M2B-1/M2B-2 may install into disposable automated conformance environments.
-Installation into the owner's local Paperclip instance remains an owner-operated
-action under ADR 0005. Before that action, the owner verifies a rehearsed backup
-restore and rollback procedure. Before the first enabled company mutation, the
-owner also requires a real mutation-free reconcile dry run and a disposable or
-non-critical test-company trial. If M2's diagnostic-only worker cannot provide
-that dry run, owner go-live waits for the later reconciler milestone; an inert
-artifact test is not production permission.
+The owner explicitly triggers each M2B-1/M2B-2 installation into a disposable
+conformance environment after its lock and preflight pass. Agents may prepare
+the environment, commands, and evidence but do not execute the installation,
+configuration, or company mutation. Installation into the owner's persistent
+local Paperclip instance remains a separate owner-operated action under ADR
+0005. Before that action, the owner verifies a rehearsed backup restore and
+rollback procedure. Before the first enabled company mutation, the owner also
+requires a real mutation-free reconcile dry run and a disposable or non-critical
+test-company trial. If M2's diagnostic-only worker cannot provide that dry run,
+owner go-live waits for the later reconciler milestone; an inert artifact test
+is not production permission.
 
 ## Additional host enforcement prerequisites
 
@@ -326,12 +332,15 @@ dependencies require an explicit plan amendment; pure policy code has none.
   worktrees, environment files, credentials, or unreviewed development
   files/metadata ship;
 - while M2A remains private, packed `package.json` may retain only the exact
-  reviewed build/typecheck/lint/test scripts and pinned TypeScript development
-  dependency; lifecycle scripts, local dependency references, and any other
-  package metadata fail verification;
+  closed metadata set: `name`, `version`, literal `private: true`, `description`,
+  `license`, `repository`, `type`, `files`, `engines`, the exact reviewed
+  build/typecheck/lint/test `scripts`, and the pinned `typescript`
+  `devDependency`; lifecycle scripts, local dependency references, and every
+  other key fail verification;
 - manifest/worker entrypoints exist only in M2B;
-- package metadata, license, repository, engines, and files allowlist agree;
 - the package remains private through M2B-1 and M2B-2;
+- `minimumHostVersion` and `minimumPaperclipVersion` are absent through M2B-1
+  and M2B-2;
 - a publishable package has a concrete minimum host version and final manifest;
 - the tarball can be installed into a clean temporary project without lockfile
   mutation outside that directory.
@@ -339,7 +348,8 @@ dependencies require an explicit plan amendment; pure policy code has none.
 M2A additionally runs three release-boundary tests:
 
 - a real Paperclip loader rejects the tarball because no plugin metadata,
-  manifest, or worker entrypoint is discoverable;
+  manifest, or worker entrypoint is discoverable, and the rejected attempt
+  creates no installed-plugin record;
 - the packed `package.json` retains literal `private: true`, omits
   `publishConfig` and `paperclipPlugin`, and the repository publish-policy check
   rejects it as non-publishable. `npm publish --dry-run` is not used as evidence:
@@ -373,8 +383,9 @@ Known fake/host semantic differences are explicit test hazards:
 - fake `runJob()` directly invokes a handler and does not model scheduler,
   startup, retry, or overlapping-run behavior.
 
-Each fake test that touches one of these surfaces is paired in the traceability
-record with a required real-host test. Fake-only evidence can never move a
+Each fake test that touches one of these surfaces is paired with a required
+real-host test in `docs/testing/traceability.md`. M2B-1 owns those rows and its
+proof of done records their exact status. Fake-only evidence can never move a
 real-host invariant to `covered`.
 
 ## Acceptance
@@ -401,8 +412,10 @@ real-host invariant to `covered`.
   missing or changed runtime capability response.
 - Restart repeats lock and runtime verification. A host downgrade or rollback
   with additive schema left in place disables activation and mutates nothing.
-- Soft uninstall/reinstall replays existing host idempotency bindings rather
-  than creating a duplicate; hard data removal is a separate owner operation.
+- Soft uninstall/reinstall registers exactly one instance job and one copy of
+  every managed declaration, with no duplicate resource or installation error.
+  Project-idempotency binding replay belongs to M7, where projects exist; hard
+  data removal remains a separate owner operation.
 - In M2B-3, a host below `minimumHostVersion` rejects installation before worker
   startup.
 - A persisted incompatible plugin is rejected on boot, reload, retry, and
@@ -440,7 +453,9 @@ real-host invariant to `covered`.
    build/typecheck/lint/test scripts, and CI without changing runtime behavior.
 2. **M2A-2: pure policy.** Add failing tests, then config and sweep-selection
    functions.
-3. **M2A-3: package guard.** Add tarball allowlist and negative leak fixtures.
+3. **M2A-3: package guard.** Add tarball allowlist, negative leak fixtures, and
+   the real-loader rejection/no-installed-record test pinned to the audited
+   Paperclip base named in this plan.
 4. **M2B-0: host enforcement integration.** Land and review pre-spawn
    compatibility revalidation, enabled-only proactive scopes, and enforced
    company availability on all mutation services, with boot/reload/restart and
@@ -449,8 +464,9 @@ real-host invariant to `covered`.
    add the development lock and fail-closed preflight, add typed manifest/worker,
    and prove diagnostic-only unsupported behavior.
 6. **M2B-2: inert installation.** Add managed declarations and scheduled job;
-   verify zero mutations until explicit opt-in in a disposable conformance host.
-   This slice does not authorize installation into the owner's local instance.
+   after the owner triggers installation in a disposable conformance host,
+   verify zero mutations until explicit opt-in. This slice does not authorize
+   installation into the owner's persistent local instance.
 7. **M2B-3: stable release boundary.** Replace the development SDK pin with the
    first joint stable release, set `minimumHostVersion`, run clean-host tests,
    and make the package structurally publishable. Publication still requires
