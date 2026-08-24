@@ -8,7 +8,7 @@ Date: 2026-08-24
 
 Audit bases:
 
-- Mission Control `main` at `962ce4140bb92626c0fecb8909de3d5ca6e73541`
+- Mission Control `main` at `6b5efd7f3bfa3e32a634794fa129308636449989`
 - Paperclip `master` at `a14e51d592dd22e2e830e01f94e6783d55df9963`
 - latest stable npm `@paperclipai/plugin-sdk` observed as `2026.817.0`
 
@@ -33,10 +33,11 @@ Milestone 2 is split because current Paperclip does not recognize the required
   and deliberately has no `paperclipPlugin` install metadata.
 - **M2B, host-gated:** final SDK dependency, manifest, worker entrypoint,
   managed resources, scheduled job, startup compatibility enforcement,
-  real-host installation tests, and removal of `private`. M2B begins only after
-  M1A, M1B, and the host enforcement prerequisites below exist together on one
-  reviewed Paperclip integration branch. It becomes release-compatible only
-  after all of them ship in one stable host release.
+  and real-host installation tests. M2B begins only after M1A, M1B, and the host
+  enforcement prerequisites below exist together on one reviewed Paperclip
+  integration branch. M2B-1 and M2B-2 remain private development artifacts;
+  only M2B-3 removes `private`, and only after all prerequisites ship together
+  in one stable host release.
 
 M2A is a preparatory slice, not completion of Milestone 2.
 
@@ -71,7 +72,7 @@ pnpm-workspace.yaml
 tsconfig.base.json
 packages/
   plugin/
-    package.json                     private until M2B acceptance
+    package.json                     private until M2B-3 acceptance
     tsconfig.json
     src/
       company-config.ts              strict enabled/default parsing
@@ -144,6 +145,35 @@ runs on fresh install, while persisted activation refreshes the manifest and
 spawns the worker without repeating that check. M2B therefore depends on a
 separate upstream pre-spawn compatibility gate; M1A and M1B alone are not
 sufficient.
+
+## Private-local integration lock
+
+M2B-1 creates a repository-owned development lock that records:
+
+- Paperclip remote, audited base commit, ordered contribution commits, and
+  resulting integration commit;
+- exact plugin SDK source and package identity;
+- expected core migration-journal hashes, including the M1B migration;
+- commands that freshly build Paperclip and the SDK, plus the reviewed artifact
+  identities produced by that build;
+- required manifest capabilities and the expected live capability-probe result;
+- exact conformance commands and their accepted result format.
+
+Preflight fails closed when either repository is dirty or mismatched, a patch is
+missing or reordered, the build is stale, the applied Paperclip migration journal
+differs, or the running host probe does not match. It runs again after restart,
+package replacement, base refresh, downgrade, and rollback. The go-live evidence
+records the observed migration journal and probe output; the static lock never
+claims to attest live state by itself.
+
+M2B-1/M2B-2 may install into disposable automated conformance environments.
+Installation into the owner's local Paperclip instance remains an owner-operated
+action under ADR 0005. Before that action, the owner verifies a rehearsed backup
+restore and rollback procedure. Before the first enabled company mutation, the
+owner also requires a real mutation-free reconcile dry run and a disposable or
+non-critical test-company trial. If M2's diagnostic-only worker cannot provide
+that dry run, owner go-live waits for the later reconciler milestone; an inert
+artifact test is not production permission.
 
 ## Additional host enforcement prerequisites
 
@@ -301,7 +331,7 @@ dependencies require an explicit plan amendment; pure policy code has none.
   package metadata fail verification;
 - manifest/worker entrypoints exist only in M2B;
 - package metadata, license, repository, engines, and files allowlist agree;
-- the package remains private before the M2B release gate;
+- the package remains private through M2B-1 and M2B-2;
 - a publishable package has a concrete minimum host version and final manifest;
 - the tarball can be installed into a clean temporary project without lockfile
   mutation outside that directory.
@@ -364,8 +394,17 @@ real-host invariant to `covered`.
 
 ### M2B
 
-- Final manifest validates without casts against the reviewed Paperclip SDK.
-- Host below `minimumHostVersion` rejects installation before worker startup.
+- The private M2B-1/M2B-2 manifest validates without casts against the exact
+  SDK and integration commit recorded by the development lock.
+- Private-lane preflight rejects SDK/host skew, partial or reordered patches,
+  stale builds, migration-journal drift, base refresh with a stale lock, and a
+  missing or changed runtime capability response.
+- Restart repeats lock and runtime verification. A host downgrade or rollback
+  with additive schema left in place disables activation and mutates nothing.
+- Soft uninstall/reinstall replays existing host idempotency bindings rather
+  than creating a duplicate; hard data removal is a separate owner operation.
+- In M2B-3, a host below `minimumHostVersion` rejects installation before worker
+  startup.
 - A persisted incompatible plugin is rejected on boot, reload, retry, and
   auto-restart before worker `setup()`.
 - Empty, malformed, and invalid-semver host versions fail closed before worker
@@ -407,9 +446,11 @@ real-host invariant to `covered`.
    company availability on all mutation services, with boot/reload/restart and
    malicious-worker denial tests.
 5. **M2B-1: reviewed SDK integration.** Pin the reviewed joint Paperclip branch,
-   add typed manifest/worker, and prove diagnostic-only unsupported behavior.
+   add the development lock and fail-closed preflight, add typed manifest/worker,
+   and prove diagnostic-only unsupported behavior.
 6. **M2B-2: inert installation.** Add managed declarations and scheduled job;
-   verify zero mutations until explicit opt-in.
+   verify zero mutations until explicit opt-in in a disposable conformance host.
+   This slice does not authorize installation into the owner's local instance.
 7. **M2B-3: stable release boundary.** Replace the development SDK pin with the
    first joint stable release, set `minimumHostVersion`, run clean-host tests,
    and make the package structurally publishable. Publication still requires
@@ -430,8 +471,10 @@ Stop and amend the architecture if:
 - a company-scoped mutation service can bypass enabled-and-valid availability;
 - M2 requires plugin SQL, UI, automatic managed-resource reconciliation, or a
   live mutation to prove compatibility;
-- a package becomes installable or publishable before the joint stable host
-  release is known;
+- a package becomes publicly installable, publicly supported, or publishable
+  before the joint stable host release is known;
+- a private artifact installs outside the exact reviewed lock, clean/fresh/live
+  preflight, verified recovery procedure, and owner-operated go-live gate;
 - tests require a production compatibility shim, internal HTTP call, direct
   Paperclip table access, or copied host implementation.
 
@@ -439,6 +482,6 @@ Stop and amend the architecture if:
 
 The final milestone record must include exact commits, file list, commands and
 outputs, Node/SDK/host versions, package tarball listing, real-host installation
-evidence, known limitations, and rollback instructions. M2 is complete only
-after M2B. M2A completion must be reported as foundation work, never as a
-working Paperclip plugin.
+evidence, locked and observed migration/probe evidence, known limitations, and
+rollback instructions. M2 is complete only after M2B. M2A completion must be
+reported as foundation work, never as a working Paperclip plugin.
