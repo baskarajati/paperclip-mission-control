@@ -255,10 +255,17 @@ while its fake harness accepts the write. The same upstream release must expose
 service's atomic conflict behavior. Mission Control never performs blind document
 updates.
 
-Both contracts must be merged and released before Mission Control is installable.
-The plugin then declares that release as `minimumHostVersion`. Until that version
-exists, CI may test against a pinned Paperclip commit, but published packages
-must not claim compatibility with an unreleased host.
+Both contracts must be merged and released before Mission Control is publicly
+distributed or claims a supported host version. The public plugin then declares
+that release as `minimumHostVersion`.
+
+Before that release, ADR 0005 permits a private local installation only against
+an exact, reviewed Paperclip integration branch containing the same proposed
+contracts and host enforcement. A repository-owned development lock binds the
+Paperclip base, ordered patch commits, resulting integration commit, and SDK
+identity. Preflight rejects a dirty or mismatched checkout. This lane is local
+development evidence, not a public compatibility promise, and it introduces no
+plugin-side shim, internal HTTP call, server import, or direct table write.
 
 Project update/archive support is deliberately deferred. v1 creates projects and
 uses existing issue/document APIs for ongoing orchestration.
@@ -367,6 +374,10 @@ The first public alpha supports:
 Cloud, multi-node workers, automatic phase confirmation, dynamic project update,
 and Paperclip versions below the minimum host are explicit non-goals.
 
+Before the first public alpha, a private local lane may run only on the exact
+reviewed integration commit described by ADR 0005. That commit is deliberately
+absent from the public support matrix.
+
 ## Failure invariants
 
 The implementation must prove:
@@ -408,4 +419,5 @@ The implementation must prove:
 - The alpha supports new mission initialization and read-only onboarding import.
   Import remains non-mutating until a separate human confirmation.
 - The exact minimum host version remains unset until both upstream contracts are
-  released. This blocks publication, not pure contract implementation.
+  released. This blocks publication and public compatibility claims, not pure
+  implementation or the locked private-local lane defined by ADR 0005.

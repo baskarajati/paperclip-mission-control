@@ -13,10 +13,15 @@ Work proceeds in two repositories and never hides the host dependencies:
 
 - Paperclip upstream: add the narrow idempotent dynamic project capability and
   expose document `baseRevisionId` through the plugin SDK.
-- Mission Control: build the public plugin against the released capability.
+- Mission Control: build one plugin contract against a locked local integration
+  branch first and the released capability later.
 
 No Mission Control package is published until the upstream capability is in a
 Paperclip release and the manifest declares that minimum host version.
+
+Before publication, ADR 0005 permits a private local installation against an
+exact reviewed Paperclip integration commit. The local lane uses the proposed
+public SDK contracts directly; it never adds a plugin-side compatibility shim.
 
 ## Milestone 0: Contract fixtures and ADRs
 
@@ -90,7 +95,8 @@ Gate:
 
 - Open an upstream issue or design discussion before PR if maintainers require it.
 - Mission Control implementation may use a pinned reviewed Paperclip branch for
-  development, but public compatibility remains blocked until release.
+  development and private local installation under ADR 0005, but public
+  compatibility remains blocked until release.
 
 ## Milestone 2: Plugin skeleton and compatibility gate
 
@@ -295,9 +301,10 @@ Required before release:
 Current Paperclip master is a forecast lane and may be non-blocking only after a
 stable minimum-host lane exists.
 
-The pure schemas and state derivation work can proceed while the upstream review
-is in flight. Publication and mutation integration remain blocked until both host
-contracts are released.
+Pure schemas, state derivation, packaging, and mutation integration may proceed
+while upstream review is in flight. Mutation integration runs only against the
+locked private-local host described by ADR 0005. Publication and public support
+remain blocked until both host contracts are released.
 
 ## Supervised execution loop
 

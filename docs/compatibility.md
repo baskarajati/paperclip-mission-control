@@ -21,6 +21,12 @@ Development currently audits Paperclip master commit
 `cc42a67e7e9e8eb183097afc8ff4ebfa694fb3e0`. That commit is not a public
 compatibility promise.
 
+Before a qualifying stable release exists, private local development may use
+only the exact reviewed integration commit recorded by the repository's
+development lock. The lock is an installation precondition, not a supported
+version range. A changed base or patch set requires a new review and conformance
+run.
+
 ## Required host capability
 
 Project-per-phase requires dynamic project creation. Current Paperclip exposes
@@ -34,6 +40,10 @@ Current plugin document `upsert` omits the core service's required
 without conflict even though the SDK fake accepts the write. Public release also
 requires the SDK/protocol bridge to expose that compare-and-swap field.
 
+The private-local lane supplies these contracts by composing their ordinary
+Paperclip contribution commits on a reviewed fork branch. Mission Control uses
+the resulting SDK directly. It does not emulate either contract in plugin code.
+
 ## Delivery semantics
 
 The current plugin event bus is in-process and fire-and-forget despite the plugin
@@ -45,7 +55,8 @@ that explicitly enable Mission Control.
 
 - Track unrelated Paperclip defects separately.
 - Prefer a fixed minimum host version over compatibility shims.
-- If a temporary shim is unavoidable, require an upstream issue, explicit opt-in, idempotency, and a removal version.
+- Do not use a temporary plugin-side shim for Mission Control's required host
+  contracts. Use the locked integration branch or fail closed.
 
 ## State ownership
 
