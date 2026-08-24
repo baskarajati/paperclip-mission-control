@@ -56,8 +56,22 @@ export function applyCompanyConfigChange(
   }
 
   const current = state.get(companyId);
-  const generation = (current?.generation ?? 0) + 1;
   const result = parseCompanyConfig(value);
+  const nextEnabled = result.ok ? result.config.enabled : false;
+  if (
+    current !== undefined &&
+    current.valid === result.ok &&
+    current.config.enabled === nextEnabled
+  ) {
+    return Object.freeze({
+      ok: true,
+      state,
+      companyId,
+      generation: current.generation,
+      result,
+    });
+  }
+  const generation = (current?.generation ?? 0) + 1;
   const next = new Map(state);
 
   next.set(
