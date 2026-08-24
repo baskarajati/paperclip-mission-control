@@ -154,7 +154,7 @@ test("invalid fixtures fail with their declared stable code", async (t) => {
           );
         } else {
           const file = Object.entries(FILE_TO_TYPE).find(
-            ([f, t]) => t === expected.type,
+            ([, type]) => type === expected.type,
           )[0];
           validateDocument(expected.type, loadJson(join(dir, file)));
         }

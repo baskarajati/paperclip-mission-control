@@ -41,22 +41,23 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run the contract test suite
+      - name: Build workspace
+        run: pnpm build
+
+      - name: Typecheck workspace
+        run: pnpm typecheck
+
+      - name: Lint workspace
+        run: pnpm lint
+
+      - name: Run the workspace test suite
         run: pnpm test
 
-      - name: Forbid runtime dependencies
-        run: |
-          node -e '
-            const pkg = require("./package.json");
-            const names = Object.keys(pkg.dependencies ?? {});
-            if (names.length > 0) {
-              console.error(
-                "AGENTS.md forbids runtime dependencies before architecture approval. Found: " +
-                  names.join(", "),
-              );
-              process.exit(1);
-            }
-          '
+      - name: Audit production dependencies
+        run: pnpm audit:prod
+
+      - name: Forbid runtime dependencies in every workspace package
+        run: pnpm verify:no-runtime-deps
 
       - name: Reject whitespace errors and conflict markers in the pull request
         if: github.event_name == 'pull_request'

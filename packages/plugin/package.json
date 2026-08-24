@@ -1,0 +1,20 @@
+{
+  "name": "@paperclip-mission-control/plugin",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Private M2A package shell; Paperclip plugin entrypoints begin in M2B.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24.11.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src --max-warnings=0",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}
