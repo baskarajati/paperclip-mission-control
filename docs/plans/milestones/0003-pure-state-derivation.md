@@ -1,7 +1,8 @@
 # Milestone 3 Plan: Documents and Pure State Derivation
 
-Status: reconciled with the independent counter-design on 2026-08-24. Slice 1 is
-unblocked. Slices 2 and 3 are specified and ready.
+Status: reconciled with the independent counter-design on 2026-08-24. Slices 1,
+2a, and 2b are delivered and open for review. Slice 3 is specified and waits on
+the snapshot shape being reviewed in #13.
 
 Author: Claude Opus 5 contributor
 
@@ -214,7 +215,7 @@ and corrected two contradictions before recording it: a rejected confirmation
 returns to `active` or `blocked`, and host activation stays a Milestone 2
 concern. The document is
 `docs/reviews/2026-08-24-m3-independent-counterdesign.md`, delivered as pull
-request #15.
+request #15, merged on 2026-08-24 as `ddeb798`.
 
 **Correction on the record.** The author first tried to dispatch this consult
 directly to a Codex session over MCP. That was wrong, and it would have taken
@@ -250,17 +251,48 @@ item below names the evidence both designs relied on.
 | 17 | The charter should gain a cancellation marker | **Refuted.** Cancellation is Paperclip business truth, not a Mission Control declaration. ADR 0002 splits business truth from operational state, so cancellation is read from host state in the snapshot. Widening the charter would move a fact the host owns into a document the plugin writes |
 
 **One divergence changes work already built.** Item 2 and item 5 both change
-slice 1, which is open as pull request #13. Slice 1 is being revised rather than
+slice 1, which is open as pull request #13. Slice 1 was revised rather than
 defended.
+
+### Divergence found while implementing, not while reviewing
+
+| # | Divergence | Resolution |
+| --- | --- | --- |
+| 18 | The counter-design lists the rejection rule after the awaiting-confirmation rule. Applied in that order, a rejected confirmation is also "no current accepted confirmation", so a phase a human already refused is reported as awaiting one | **Corrected.** Slice 2b evaluates rejection first. The departure was checked by reordering the implementation back to the listed order, which fails the rejection test, so the change is load-bearing rather than stylistic |
+
+A design review could not have found this one. It only appears when the order is
+executed.
+
+### Open decision, raised by slice 2b
+
+The counter-design states that a predecessor "remains nonterminal until its
+successor is fully verified". It does not say which non-terminal state the phase
+holds between an accepted current confirmation and a verified successor.
+
+Slice 2b uses `awaiting_confirmation`, on the reading that the phase awaits the
+transition rather than the human. Every alternative is worse: `provisioning` is
+defined for the incoming side and would conflate two phases, and `validating`
+would claim evidence work that is already finished. This is a judgement filling a
+gap the design leaves open, and it needs a ruling rather than silent adoption.
 
 ## Slices
 
 | Slice | Content | Status |
 | --- | --- | --- |
-| 1 | Snapshot shape with the host revision envelope, structural validation returning `Outcome`, purity and import guards | Unblocked. Open as #13, being revised against divergences 1, 2, 3, 4, and 5 |
-| 2 | Evidence reduction and phase precedence, with the codes those rules need | Specified by the counter-design. Ready after slice 1 |
-| 3 | Mission precedence, findings, waivers, blockers, budget and invocation gates | Specified. Ready after slice 2 |
+| 1 | Snapshot shape with the host revision envelope, structural validation returning `Outcome`, purity and import guards | Delivered, open as #13 |
+| 2a | Phase order from the charter, and evidence reduction | Delivered, open as #17 |
+| 2b | Phase decision order over named facts | Delivered, open as #23 |
+| 3 | Snapshot adapter, mission precedence, findings, waivers, blockers, budget and invocation gates | Specified. Blocked on the snapshot shape under review in #13 |
 | 4 | Transition candidate, property tests, traceability update | Ready after slice 3. Divergence 15 stays fail-closed until upstream answers |
+
+Slice 2 was split. Evidence reduction and phase precedence together are roughly
+nine hundred lines with an eleven-branch decision table, and one unreviewable
+pull request serves nobody.
+
+Slice 2b takes a flat observation of named facts rather than a snapshot, because
+the snapshot carries no phase controls, confirmations, budget incidents, or
+ownership yet. The decision order therefore states which facts the snapshot must
+supply, and slice 3 builds the adapter against that statement instead of a guess.
 
 Contract repairs are not a single slice. Each gap in section 5 is classified
 there as repair now, host envelope later, or blocked, and each repair travels
@@ -269,8 +301,9 @@ with the slice that first needs it.
 ## Allowed files
 
 - `contracts/v1/**` for new pure modules and any schema change section 5 lists
+- `contracts/snapshot.mjs`, the boundary between the host and the pure core
 - `fixtures/**`
-- `tests/**`
+- `tests/**`, including shared builders under `tests/contracts/helpers/`
 - `docs/testing/traceability.md`
 - this plan and the consult prompt
 
