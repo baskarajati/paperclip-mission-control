@@ -9,13 +9,13 @@ import {
 } from "node:fs/promises";
 import { gunzipSync } from "node:zlib";
 import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { spawn } from "node:child_process";
 import { tmpdir } from "node:os";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const pluginDirectory = join(root, "packages/plugin");
-const expectedPackageFiles = new Set([
+export const expectedPackageFiles = Object.freeze([
   "package/package.json",
   "package/dist/company-config.d.ts",
   "package/dist/company-config.js",
@@ -24,6 +24,7 @@ const expectedPackageFiles = new Set([
   "package/dist/sweep-policy.d.ts",
   "package/dist/sweep-policy.js",
 ]);
+const expectedPackageFileSet = new Set(expectedPackageFiles);
 const forbiddenContentPatterns = [
   ["absolute user path", /(?:\/Users\/|\/home\/|[A-Za-z]:\\Users\\)/u],
   [
@@ -42,7 +43,7 @@ function fail(message) {
   throw new Error(`verify:package: ${message}`);
 }
 
-function readTarEntries(tarball) {
+export function readTarEntries(tarball) {
   const bytes = gunzipSync(tarball);
   const entries = [];
   let offset = 0;
@@ -131,7 +132,7 @@ async function main() {
     const expectedPaths = [...expectedPackageFiles].sort();
 
     if (JSON.stringify(paths) !== JSON.stringify(expectedPaths)) {
-      const unexpected = paths.filter((path) => !expectedPackageFiles.has(path));
+      const unexpected = paths.filter((path) => !expectedPackageFileSet.has(path));
       const missing = expectedPaths.filter((path) => !paths.includes(path));
       fail(
         `tarball paths differ; unexpected=${JSON.stringify(unexpected)}, missing=${JSON.stringify(missing)}`,
@@ -309,7 +310,15 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(error instanceof Error ? error.message : String(error));
-  process.exitCode = 1;
-});
+// Run the verification only on direct execution; importing the module must
+// have no side effects so tests can reuse readTarEntries and
+// expectedPackageFiles.
+if (
+  process.argv[1] !== undefined &&
+  import.meta.url === pathToFileURL(resolve(process.argv[1])).href
+) {
+  main().catch((error) => {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = 1;
+  });
+}

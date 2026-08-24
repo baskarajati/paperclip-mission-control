@@ -18,7 +18,7 @@
     "test:tooling": "node --test \"tests/tooling/*.test.mjs\"",
     "test:package": "pnpm build && node --test \"tests/package/*.test.mjs\"",
     "verify:package": "node scripts/verify-package.mjs",
-    "test:real-loader": "node --test \"tests/conformance/real-loader.test.mjs\"",
+    "test:real-loader": "pnpm build && node --test \"tests/conformance/real-loader.test.mjs\"",
     "verify:no-runtime-deps": "node scripts/verify-no-runtime-dependencies.mjs",
     "verify": "pnpm build && pnpm typecheck && pnpm lint && pnpm test && pnpm verify:package && pnpm verify:no-runtime-deps"
   },

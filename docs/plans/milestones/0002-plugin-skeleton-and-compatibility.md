@@ -335,8 +335,13 @@ pnpm verify:package
 pnpm verify
 ```
 
-Use Node 24.11 or newer and pnpm 9.15.4. Lock all direct dependencies. Runtime
-dependencies require an explicit plan amendment; pure policy code has none.
+Use Node 24.11 or newer and pnpm 9.15.4. Lock all direct dependencies. M2A
+has no runtime dependencies: the root and every workspace package must keep
+`dependencies`, `optionalDependencies`, `peerDependencies`,
+`bundledDependencies`, and `bundleDependencies` absent or empty. The
+deterministic guard rejects every one of those runtime dependency classes;
+`devDependencies` are tooling-only and remain separately pinned. A runtime
+dependency requires an explicit plan amendment; pure policy code has none.
 
 `verify:package` creates a dry-run tarball in a temporary directory and checks:
 
@@ -371,8 +376,12 @@ M2A additionally runs three release-boundary tests:
   manifest/worker artifacts, proving the allowlist rejects them.
 
 CI runs Node 24 and 25 for install, build, typecheck, lint, unit tests,
-`git diff --check`, package verification, and a production-dependency audit.
-Known high or critical production vulnerabilities block M2 acceptance unless a
+`git diff --check`, package verification, and the runtime-dependency guard.
+All runtime dependency classes are mechanically forbidden in M2A. While the
+runtime dependency set is empty, that deterministic guard replaces the former
+vacuous network production audit. If a runtime dependency is later allowed by
+an accepted plan amendment, restore a blocking production vulnerability audit.
+Known high or critical production vulnerabilities block acceptance unless a
 time-bounded exception is documented in the same review. SBOM, provenance, and
 the full release audit remain M9 release gates.
 

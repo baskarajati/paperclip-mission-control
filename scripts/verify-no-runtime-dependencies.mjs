@@ -10,11 +10,30 @@ const packageFiles = [
     .map((entry) => join(root, `packages/${entry.name}/package.json`)),
 ];
 
+// These are all package.json fields that can make a package depend on a
+// runtime package. `devDependencies` is intentionally absent: it is tooling
+// only for this milestone and is checked separately by package verification.
+const runtimeDependencyFields = [
+  "dependencies",
+  "optionalDependencies",
+  "peerDependencies",
+  "bundledDependencies",
+  "bundleDependencies",
+];
+
 const violations = packageFiles.flatMap((file) => {
   const packageJson = JSON.parse(readFileSync(file, "utf8"));
-  return Object.keys(packageJson.dependencies ?? {}).map(
-    (name) => `${file}: ${name}`,
-  );
+  return runtimeDependencyFields.flatMap((field) => {
+    const value = packageJson[field];
+    if (value === undefined) return [];
+    if (Array.isArray(value)) {
+      return value.map((name) => `${file}: ${field}.${name}`);
+    }
+    if (value !== null && typeof value === "object") {
+      return Object.keys(value).map((name) => `${file}: ${field}.${name}`);
+    }
+    return [`${file}: ${field} (must be empty)`];
+  });
 });
 
 if (violations.length > 0) {
