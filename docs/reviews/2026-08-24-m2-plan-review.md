@@ -95,3 +95,10 @@ plugin or company mutation is authorized by this review.
 
 Final second-pass verdict: **approved**. No remaining blockers were found after
 the dispositions above.
+
+Implementation evidence clarification: `npm pack` retains the package's scripts
+and development dependencies inside packed `package.json`. M2A therefore
+allowlists only its exact non-lifecycle toolchain scripts and pinned TypeScript
+development dependency; all other metadata and local dependency references are
+rejected. This narrows the original "development metadata" wording without
+weakening the private/non-installable boundary.
