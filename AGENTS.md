@@ -16,7 +16,9 @@
 
 - Use **pnpm** with the version declared by `packageManager`.
 - Require `node --version` to satisfy `engines.node`; never hardcode a local Node
-  installation path.
+  installation path. `.npmrc` sets `engine-strict=true`, so pnpm refuses an
+  unsupported runtime. Without it pnpm ignores `engines`, and the suite passes
+  green on an unsupported Node.
 - Install with `pnpm install --frozen-lockfile`.
 - Inspect the checked-out `package.json` scripts. Run `pnpm verify` when it
   exists; otherwise run every relevant available gate and `pnpm test`.
