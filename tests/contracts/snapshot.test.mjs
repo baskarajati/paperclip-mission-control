@@ -222,12 +222,17 @@ test("the pure core reads no clock, randomness, environment, or network", () => 
 
 test("the pure core imports neither the schema validator nor the filesystem", () => {
   const dir = join(ROOT, "contracts", "v1");
+  // Match import specifiers only. A comment that names a module is prose, not a
+  // dependency, and a guard that cannot tell the difference gets weakened later.
+  const specifiers = (source) => [
+    ...source.matchAll(/(?:from|import)\s*\(?\s*["']([^"']+)["']/g),
+  ].map((m) => m[1]);
   for (const file of readdirSync(dir).filter((f) => f.endsWith(".mjs"))) {
-    const source = readFileSync(join(dir, file), "utf8");
-    for (const pattern of [/validator\.mjs/, /\bajv\b/i, /node:fs/]) {
+    const found = specifiers(readFileSync(join(dir, file), "utf8"));
+    for (const specifier of found) {
       assert.ok(
-        !pattern.test(source),
-        `contracts/v1/${file} must not import ${pattern}; validation runs before derivation, never inside it`,
+        !/validator\.mjs$|^ajv|node:fs/.test(specifier),
+        `contracts/v1/${file} imports ${specifier}; validation runs before derivation, never inside it`,
       );
     }
   }

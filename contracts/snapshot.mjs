@@ -49,10 +49,14 @@
  * @property {object} operations Plugin observations. Never business authority.
  */
 import { validateDocument, validatePair } from "./validator.mjs";
+import { MC } from "./v1/codes.mjs";
 
-/** Codes this module introduces. Every other code belongs to the validator. */
+/**
+ * Codes this boundary reports. They live in the shared registry so one
+ * vocabulary serves the boundary and the pure core.
+ */
 export const SNAPSHOT_CODES = Object.freeze({
-  SNAPSHOT_INVALID: "MC_SNAPSHOT_INVALID",
+  SNAPSHOT_INVALID: MC.SNAPSHOT_INVALID,
 });
 
 const isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
